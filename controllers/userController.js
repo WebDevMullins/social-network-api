@@ -49,6 +49,21 @@ const userController = {
 			console.error(err)
 			return res.status(400).json(err)
 		}
+	},
+
+	// DELETE user by its _id
+	async deleteUser(req, res) {
+		try {
+			const user = await User.findOneAndDelete({ _id: req.params.id })
+			if (!user) {
+				return res.status(404).json({ message: 'No user found with this id!' })
+			}
+			// TODO: Delete associated thoughts when user is deleted.
+			res.status(200).json({ message: 'User deleted!' })
+		} catch (err) {
+			console.error(err)
+			return res.status(400).json(err)
+		}
 	}
 }
 

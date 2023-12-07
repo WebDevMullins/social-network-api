@@ -1,4 +1,4 @@
-const { User } = require('../models')
+const { User, Thought } = require('../models')
 
 const userController = {
 	// GET all users
@@ -62,8 +62,10 @@ const userController = {
 			if (!user) {
 				return res.status(404).json({ message: 'No user found with this id!' })
 			}
-			// TODO: Delete associated thoughts when user is deleted.
-			res.status(200).json({ message: 'User deleted!' })
+			// Delete associated thoughts when user is deleted.
+			await Thought.deleteMany({ _id: { $in: user.thoughts } })
+
+			res.status(200).json({ message: 'User and associated thoughts deleted!' })
 		} catch (err) {
 			console.error(err)
 			return res.status(400).json(err)

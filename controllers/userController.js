@@ -16,7 +16,6 @@ const userController = {
 	async getUserById(req, res) {
 		try {
 			const user = await User.findOne({ _id: req.params.id }).select('-__v')
-			console.log(req.params.id)
 			if (!user) {
 				return res.status(404).json({ message: 'No user found with this id!' })
 			}
@@ -35,6 +34,20 @@ const userController = {
 		} catch (err) {
 			console.log(err)
 			return res.status(500).json(err)
+		}
+	},
+
+	// Update user by its _id
+	async updateUser(req, res) {
+		try {
+			const user = await User.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true })
+			if (!user) {
+				return res.status(404).json({ message: 'No user found with this id!' })
+			}
+			res.json(user)
+		} catch (err) {
+			console.error(err)
+			return res.status(400).json(err)
 		}
 	}
 }

@@ -86,6 +86,24 @@ const userController = {
 			console.error(err)
 			return res.status(400).json(err)
 		}
+	},
+
+	// Remove friend from user's friend list
+	async deleteFriend(req, res) {
+		try {
+			const friend = await User.findOneAndUpdate(
+				{ _id: req.params.userId },
+				{ $pull: { friends: req.params.friendId } },
+				{ runValidators: true, new: true }
+			)
+			if (!friend) {
+				return res.status(404).json({ message: 'No user found with this id!' })
+			}
+			return res.status(200).json(friend)
+		} catch (err) {
+			console.error(err)
+			return res.status(400).json(err)
+		}
 	}
 }
 

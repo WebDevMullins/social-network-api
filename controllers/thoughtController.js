@@ -32,12 +32,12 @@ const thoughtController = {
 			const thought = await Thought.create(req.body)
 			// Find the user and push the thought's _id
 			// to the user's `thoughts` array
-			await User.findOneAndUpdate(
+			const user = await User.findOneAndUpdate(
 				{ _id: req.body.userId },
 				{ $push: { thoughts: thought } },
 				{ runValidators: true, new: true }
 			)
-			return res.status(200).json({ message: 'Thought created and added to user!' })
+			return res.status(200).json({ thought, user })
 		} catch (err) {
 			console.error(err)
 			return res.status(500).json(err)
@@ -64,10 +64,14 @@ const thoughtController = {
 	// DELETE a thought by its _id
 	async deleteThought(req, res) {
 		try {
-			const thought = await Thought.findOneAndDelete({ _id: req.params.thoughtId })
+			const thought = await Thought.findOne({ _id: req.params.thoughtId })
+
 			if (!thought) {
 				return res.status(404).json({ message: 'No thought found with this ID!' })
 			}
+			// Envoke the pre('deleteOne') middleware
+			await thought.deleteOne()
+
 			return res.status(200).json({ message: 'Thought deleted!' })
 		} catch (err) {
 			console.error(err)

@@ -1,5 +1,7 @@
 const { model, Schema } = require('mongoose')
 const reactionSchema = require('./Reaction')
+const User = require('./User'); // Add missing import
+
 
 const thoughtSchema = new Schema({
 	thoughtText: {
@@ -23,6 +25,20 @@ const thoughtSchema = new Schema({
 // TODO: Create a virtual called reactionCount that retrieves
 // the length of the thought's reactions array field on query.
 
-const Thought = model('thought', thoughtSchema)
+// Remove the thoughtId from the associated user's `thoughts` array
+thoughtSchema.pre('deleteOne', { document: true, query: false }, async function (next) {
+	// 'this' will be the thought document
+	try {
+		await User.updateOne(
+			{ username: this.username },
+			{ $pull: { thoughts: this._id } }
+		);
+		next();
+	} catch (error) {
+		next(error);
+	}
+});
 
-module.exports = Thought
+const Thought = model('thought', thoughtSchema);
+
+module.exports = Thought;

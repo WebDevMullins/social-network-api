@@ -1,3 +1,4 @@
+// Importing required modules
 const { model, Schema } = require('mongoose')
 
 // User schema

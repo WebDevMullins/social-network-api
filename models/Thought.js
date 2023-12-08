@@ -1,8 +1,10 @@
+// Import required modules
 const { model, Schema } = require('mongoose')
 const reactionSchema = require('./Reaction')
 const User = require('./User')
 const dayjs = require('dayjs')
 
+// Define the thought schema
 const thoughtSchema = new Schema(
 	{
 		thoughtText: {
@@ -48,6 +50,8 @@ thoughtSchema.pre('deleteOne', { document: true, query: false }, async function 
 	}
 })
 
+// Create the Thought model using the thought schema
 const Thought = model('thought', thoughtSchema)
 
+// Export the Thought model
 module.exports = Thought

@@ -1,6 +1,8 @@
+// Importing required modules
 const { Schema, Types } = require('mongoose')
 const dayjs = require('dayjs')
 
+// Creating the reaction schema
 const reactionSchema = new Schema({
 	reactionId: {
 		type: Schema.Types.ObjectId,
@@ -22,4 +24,5 @@ const reactionSchema = new Schema({
 	}
 })
 
+// Exporting the reaction schema
 module.exports = reactionSchema

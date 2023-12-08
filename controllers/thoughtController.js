@@ -5,10 +5,10 @@ const thoughtController = {
 	async getThoughts(req, res) {
 		try {
 			const thoughts = await Thought.find().select('-__v')
-			return res.status(200).json(thoughts)
+			res.json(thoughts)
 		} catch (err) {
 			console.error(err)
-			return res.status(500).json(err)
+			res.status(500).json(err)
 		}
 	},
 
@@ -19,10 +19,10 @@ const thoughtController = {
 			if (!thought) {
 				return res.status(404).json({ message: 'No thought found with this ID!' })
 			}
-			return res.status(200).json(thought)
+			res.json(thought)
 		} catch (err) {
 			console.error(err)
-			return res.status(500).json(err)
+			res.status(500).json(err)
 		}
 	},
 
@@ -34,30 +34,30 @@ const thoughtController = {
 			// to the user's `thoughts` array
 			const user = await User.findOneAndUpdate(
 				{ _id: req.body.userId },
-				{ $push: { thoughts: thought } },
+				{ $addToSet: { thoughts: thought } },
 				{ runValidators: true, new: true }
 			)
-			return res.status(200).json({ thought, user })
+			res.json({ thought, user })
 		} catch (err) {
 			console.error(err)
-			return res.status(500).json(err)
+			res.status(500).json(err)
 		}
 	},
 
 	// Update a thought by its _id
 	async updateThought(req, res) {
 		try {
-			const thought = await Thought.findOneAndUpdate({ _id: req.params.thoughtId }, req.body, {
-				runValidators: true,
-				new: true
-			})
+			const thought = await Thought.findOneAndUpdate(
+				{ _id: req.params.thoughtId },
+				{ $set: req.body },
+				{	runValidators: true, new: true })
 			if (!thought) {
 				return res.status(404).json({ message: 'No thought found with this ID!' })
 			}
-			return res.status(200).json(thought)
+			res.json(thought)
 		} catch (err) {
 			console.error(err)
-			return res.status(500).json(err)
+			res.status(500).json(err)
 		}
 	},
 
@@ -72,10 +72,10 @@ const thoughtController = {
 			// Envoke the pre('deleteOne') middleware
 			await thought.deleteOne()
 
-			return res.status(200).json({ message: 'Thought deleted!' })
+			res.json({ message: 'Thought deleted!' })
 		} catch (err) {
 			console.error(err)
-			return res.status(500).json(err)
+			res.status(500).json(err)
 		}
 	},
 
@@ -84,16 +84,16 @@ const thoughtController = {
 		try {
 			const reaction = await Thought.findOneAndUpdate(
 				{ _id: req.params.thoughtId },
-				{ $push: { reactions: req.body } },
+				{ $addToSet: { reactions: req.body } },
 				{ runValidators: true, new: true }
 			)
 			if (!reaction) {
 				return res.status(404).json({ message: 'No thought found with this ID!' })
 			}
-			return res.status(200).json(reaction)
+			res.json(reaction)
 		} catch (err) {
 			console.error(err)
-			return res.status(500).json(err)
+			res.status(500).json(err)
 		}
 	},
 
@@ -108,7 +108,7 @@ const thoughtController = {
 			if (!reaction) {
 				return res.status(404).json({ message: 'Check thought and reaction ID!' })
 			}
-			return res.status(200).json(reaction)
+			res.json(reaction)
 		} catch (err) {
 			console.error(err)
 			return res.status(500).json(err)

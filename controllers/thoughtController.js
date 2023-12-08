@@ -32,12 +32,12 @@ const thoughtController = {
 			const thought = await Thought.create(req.body)
 			// Find the user and push the thought's _id
 			// to the user's `thoughts` array
-			const user = await User.findOneAndUpdate(
+			await User.findOneAndUpdate(
 				{ _id: req.body.userId },
 				{ $addToSet: { thoughts: thought } },
 				{ runValidators: true, new: true }
 			)
-			res.json({ thought, user })
+			res.json(thought)
 		} catch (err) {
 			console.error(err)
 			res.status(500).json(err)
@@ -50,7 +50,8 @@ const thoughtController = {
 			const thought = await Thought.findOneAndUpdate(
 				{ _id: req.params.thoughtId },
 				{ $set: req.body },
-				{	runValidators: true, new: true })
+				{ runValidators: true, new: true }
+			)
 			if (!thought) {
 				return res.status(404).json({ message: 'No thought found with this ID!' })
 			}

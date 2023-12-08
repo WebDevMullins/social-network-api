@@ -22,7 +22,14 @@ const reactionSchema = new Schema({
 		default: dayjs(),
 		get: (createdAtVal) => dayjs(createdAtVal).format('MMM DD, YYYY [at] hh:mm a')
 	}
-})
+},
+{
+	toJSON: {
+		getters: true
+	},
+	id: false
+}
+)
 
 // Exporting the reaction schema
 module.exports = reactionSchema
